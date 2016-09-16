@@ -3,27 +3,20 @@ package com.intesens.kinto_http;
 /**
  * Created by amalle on 16/09/16.
  * Endpoints templates
- *
- * Usage examples:
- * - ROOT.get()
- * - BACTH.get()
- * - PERMISSIONS.get()
- * - BUCKET.get("bucketname")
- * - HISTORY.get("bucketname")
- * - COLLECTION.get("bucketname", "collectioname")
- * - GROUP.get("bucketname", "groupname")
- * - RECORD.get("bucketname", "collectioname", 42) # record id
- * - ATTACHMENT.get("bucketname", "collectioname", 42) # record id
  */
 public enum ENDPOINTS {
-    ROOT("/"),
-    BATCH("/batch"),
-    PERMISSIONS("/permissions"),
-    BUCKET("/buckets/%s"),
+    ROOT("{root}"),
+    BATCH(ROOT.path + "/batch"),
+    PERMISSIONS(ROOT.path + "/permissions"),
+    BUCKETS(ROOT.path + "/buckets"),
+    BUCKET(BUCKETS.path + "/{bucket}"),
     HISTORY(BUCKET.path + "/history"),
-    COLLECTION(BUCKET.path + "/collections/%s"),
-    GROUP(BUCKET.path + "/groups/%s"),
-    RECORD(COLLECTION.path + "/records/%s"),
+    COLLECTIONS(BUCKET.path + "/collections"),
+    COLLECTION(COLLECTIONS.path + "/{collection}"),
+    GROUPS(BUCKET.path + "/groups"),
+    GROUP(GROUPS.path + "/{group}"),
+    RECORDS(COLLECTION.path + "/records"),
+    RECORD(RECORDS.path + "/{record}"),
     ATTACHMENT(RECORD.path + "/attachment");
 
     private String path;
@@ -32,8 +25,8 @@ public enum ENDPOINTS {
         this.path = path;
     }
 
-    public String get(Object... args) {
-        return String.format(path, args);
+    public String getPath() {
+        return path;
     }
 }
 
