@@ -118,8 +118,8 @@ public class KintoClient {
      * @return
      */
     GetRequest request(ENDPOINTS endpoint) {
-        GetRequest request = Unirest.get(endpoint.getPath())
-                .routeParam("root", remote)
+        String url = remote + endpoint.getPath();
+        GetRequest request = Unirest.get(url)
                 .header("Accept",       "application/json")
                 .header("Content-Type", "application/json");
         if(isHeaders()) {

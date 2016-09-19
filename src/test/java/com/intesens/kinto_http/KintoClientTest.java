@@ -140,7 +140,7 @@ public class KintoClientTest {
                 Object[] args = invocation.getArguments();
                 GetRequest getRequest = (GetRequest)args[0];
                 // THEN the correct endpoint is called
-                assertThat(getRequest.getUrl(), is("https%3A%2F%2Ffake.kinto.url/buckets"));
+                assertThat(getRequest.getUrl(), is(remote + "/buckets"));
                 // AND headers are corrects
                 assertThat(getRequest.getHeaders(), is(expectedHeaders));
                 // AND the get method is used
@@ -181,7 +181,7 @@ public class KintoClientTest {
         // WHEN calling request
         GetRequest request = kintoClient.request(endpoint);
         // THEN the root part is initialized
-        assertThat(request.getUrl(), is("https%3A%2F%2Ffake.kinto.url/buckets/{bucket}/groups"));
+        assertThat(request.getUrl(), is(remote + "/buckets/{bucket}/groups"));
         // AND the get http method is used
         assertThat(request.getHttpMethod(), is(HttpMethod.GET));
         // AND the default headers are set
@@ -207,7 +207,7 @@ public class KintoClientTest {
         // WHEN calling request
         GetRequest request = kintoClient.request(endpoint);
         // THEN the root part is initialized
-        assertThat(request.getUrl(), is("https%3A%2F%2Ffake.kinto.url/buckets/{bucket}/groups"));
+        assertThat(request.getUrl(), is(remote + "/buckets/{bucket}/groups"));
         // AND the get http method is used
         assertThat(request.getHttpMethod(), is(HttpMethod.GET));
         // AND the default headers are set

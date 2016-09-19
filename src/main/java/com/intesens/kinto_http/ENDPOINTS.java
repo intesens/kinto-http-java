@@ -5,7 +5,7 @@ package com.intesens.kinto_http;
  * Endpoints templates
  */
 public enum ENDPOINTS {
-    ROOT("{root}"),
+    ROOT(""),
     BATCH(ROOT.path + "/batch"),
     PERMISSIONS(ROOT.path + "/permissions"),
     BUCKETS(ROOT.path + "/buckets"),
