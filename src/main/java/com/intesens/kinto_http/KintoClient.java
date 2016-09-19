@@ -1,5 +1,8 @@
 package com.intesens.kinto_http;
 
+    import java.io.IOException;
+import java.util.*;
+
 import org.json.JSONObject;
 
 import com.mashape.unirest.http.HttpResponse;
@@ -19,13 +22,30 @@ public class KintoClient {
     private String remote;
 
     /**
+     * Custom headers added to each requests
+     */
+    private Map<String, String> headers;
+
+    /**
      * @param remote The remote URL
      *               Must contain the version
      * @throws IllegalArgumentException if remote is null or an empty String
      */
     public KintoClient(String remote) {
-
         setRemote(remote);
+    }
+
+    /**
+     * @param remote The remote URL
+     *               Must contain the version
+     * @param headers Custom http headers added to each requests
+     * @throws IllegalArgumentException
+     *          if remote is null or an empty String
+     *          if headers is null
+     */
+    public KintoClient(String remote, Map<String, String> headers) {
+        this(remote);
+        setHeaders(headers);
     }
 
     /**
@@ -34,36 +54,78 @@ public class KintoClient {
      * @throws IllegalArgumentException if remote is null or an empty String
      */
     public void setRemote(String remote) {
-        if(remote == null || remote.length() <= 0) {
+        if (remote == null || remote.length() <= 0) {
             throw new IllegalArgumentException("Illegal remote argument : \"" + remote + "\"");
         }
         // TODO check version
         this.remote = remote;
     }
 
+    /**
+     * @return the current remote
+     */
+    public String getRemote() {
+        return remote;
+    }
+
+    /**
+     * Customs http headers that will be added to each requests
+     * @param headers a map of http headers fields and values
+     * @throws IllegalArgumentException if headers is null
+     */
+    public void setHeaders(Map<String, String> headers) {
+        if (headers == null) {
+            throw new IllegalArgumentException("Illegal headers argument : \"" + headers + "\"");
+        }
+        this.headers = headers;
+    }
+
+    public Map<String, String> getHeaders() {
+        return Collections.unmodifiableMap(headers);
+    }
+
+    /**
+     * @return true if headers is not null and not empty
+     */
+    public boolean isHeaders() {
+        return headers != null && !headers.isEmpty();
+    }
+
+    /**
+     * Retrieves the list of buckets
+     * @return a list of buckets
+     * @throws KintoHTTPException
+     * @throws KintoException
+     */
     public JSONObject listBuckets() throws KintoHTTPException, KintoException {
         return execute(request(ENDPOINTS.BUCKETS));
     }
 
+    /**
+     * Retrieve a bucket objet to perform operations on it
+     * @param name the bucket name
+     * @return
+     */
     public Bucket bucket(String name) {
         return new Bucket(this, name);
     }
 
     /**
      * Prepare a get request for the requested endpoint
-     * Handle :
-     * - Auth (TODO)
-     * - Accept and Content-Type Headers
+     * Add default http headers (Accept, Content-Type)
+     * Then add custom headers {@link #setHeaders(Map)}
      * @param endpoint
      * @return
      */
     GetRequest request(ENDPOINTS endpoint) {
-        return Unirest.get(endpoint.getPath())
+        GetRequest request = Unirest.get(endpoint.getPath())
                 .routeParam("root", remote)
-                //.basicAuth("username", "password") TODO
                 .header("Accept",       "application/json")
-                .header("Content-Type", "application/json")
-                ;
+                .header("Content-Type", "application/json");
+        if(isHeaders()) {
+            request.headers(headers);
+        }
+        return request;
     }
 
     /**
@@ -85,5 +147,14 @@ public class KintoClient {
         } catch (UnirestException e) {
             throw new KintoHTTPException("Error during bucket.getData", e);
         }
+    }
+
+    /**
+     * Clone the asynchronous http client and its event loop.
+     * Use this method to close all the threads and allow your application to exit.
+     * @throws IOException
+     */
+    public void shutdown() throws IOException {
+        Unirest.shutdown();
     }
 }
