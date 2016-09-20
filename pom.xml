@@ -4,7 +4,7 @@
 
     <groupId>com.intesens.kinto-http-java</groupId>
     <artifactId>kinto-http-java</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
