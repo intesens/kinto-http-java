@@ -26,6 +26,18 @@ public class CollectionTest {
 
     private Map<String, List<String>> defaultHeaders;
 
+    class SimpleClass {
+        private String param;
+
+        public SimpleClass (String param) {
+            this.param = param;
+        }
+
+        public String getParam() {
+            return param;
+        }
+    }
+
     @Before
     public void setUp() throws Exception {
         // set default headers
@@ -138,6 +150,42 @@ public class CollectionTest {
                 .listRecords();
         // THEN check if the answer is correctly called by checking the result
         assertThat(jsonObject.toString(), is("{}"));
+    }
+
+    @Test
+    public void listRecordsClazz() throws Exception {
+        // GIVEN a fake remote kinto url
+        String remote = "https://fake.kinto.url";
+        // AND expected headers
+        Map<String, List<String>> expectedHeaders = new HashMap<>(defaultHeaders);
+        // AND a kintoClient
+        KintoClient kintoClient = spy(new KintoClient(remote));
+        // AND a mocked kintoClient
+        doAnswer(new Answer<SimpleClass>() {
+            public SimpleClass answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                GetRequest getRequest = (GetRequest)args[0];
+                // THEN the correct endpoint is called
+                assertThat(
+                        getRequest.getUrl(),
+                        is(remote + "/buckets/bucketName/collections/collectionName/records")
+                );
+                // AND headers are corrects
+                assertThat(getRequest.getHeaders(), is(expectedHeaders));
+                // AND the get method is used
+                assertThat(getRequest.getHttpMethod(), is(HttpMethod.GET));
+                return new SimpleClass("hello");
+            }
+        })
+                .when(kintoClient)
+                .execute(any(GetRequest.class), any(Class.class));
+        // WHEN calling bucket.collection.listRecords
+        SimpleClass object = kintoClient
+                .bucket("bucketName")
+                .collection("collectionName")
+                .listRecords(SimpleClass.class);
+        // THEN check if the answer is correctly called by checking the result
+        assertThat(object.getParam(), is("hello"));
     }
 
     @Test

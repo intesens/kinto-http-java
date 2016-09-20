@@ -7,7 +7,8 @@ import org.json.JSONObject;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
+    import com.mashape.unirest.http.ObjectMapper;
+    import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.GetRequest;
 
@@ -46,6 +47,33 @@ public class KintoClient {
     public KintoClient(String remote, Map<String, String> headers) {
         this(remote);
         setHeaders(headers);
+    }
+
+    /**
+     * @param remote The remote URL
+     *               Must contain the version
+     * @param objectMapper Custom objectMapper
+     * @throws IllegalArgumentException
+     *          if remote is null or an empty String
+     *          if headers is null
+     */
+    public KintoClient(String remote, ObjectMapper objectMapper) {
+        this(remote);
+        Unirest.setObjectMapper(objectMapper);
+    }
+
+    /**
+     * @param remote The remote URL
+     *               Must contain the version
+     * @param headers Custom http headers added to each requests
+     * @param objectMapper Custom object mapper
+     * @throws IllegalArgumentException
+     *          if remote is null or an empty String
+     *          if headers is null
+     */
+    public KintoClient(String remote, Map<String, String> headers, ObjectMapper objectMapper) {
+        this(remote, headers);
+        Unirest.setObjectMapper(objectMapper);
     }
 
     /**
@@ -145,7 +173,29 @@ public class KintoClient {
             }
             return response.getBody().getObject();
         } catch (UnirestException e) {
-            throw new KintoHTTPException("Error during bucket.getData", e);
+            throw new KintoHTTPException("Error during \"" + request.getUrl() + "\"", e);
+        }
+    }
+
+    /**
+     * Execute the given request
+     * @param request
+     * @param clazz the response class
+     * @return the response body as a clazz object
+     * @throws KintoException if there is a kinto error
+     * @throws KintoHTTPException if there is a http transport error
+     */
+    <T> T execute(GetRequest request, Class<? extends T> clazz) throws KintoException, KintoHTTPException {
+        try {
+            // Call the remote with a request
+            HttpResponse<T> response = request.asObject(clazz);
+            // Handle kinto errors
+            if(response.getStatus() != 200) {
+                throw new KintoException(response.getStatusText());
+            }
+            return response.getBody();
+        } catch (UnirestException e) {
+            throw new KintoHTTPException("Error during \"" + request.getUrl() + "\"", e);
         }
     }
 

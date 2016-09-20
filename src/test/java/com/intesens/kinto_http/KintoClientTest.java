@@ -86,6 +86,14 @@ public class KintoClientTest {
         // THEN an IllegalArgumentException is thrown
     }
 
+    // TODO testConstructorWithObjectMapper
+    public void testConstructorWithObjectMapper() {
+        // GIVEN correct remote
+        // AND an object mapper
+        // HEN building a kintoClient
+        // THEN the unirest objectMapper is set
+    }
+
     // TODO testSetRemoteWithCorrectRemote
     public void testSetRemoteWithCorrectRemote() {
         // GIVEN correct remote

@@ -53,21 +53,35 @@ public class Collection {
         return kintoClient.execute(request);
     }
 
+    private GetRequest getListRecordsRequest() {
+        return kintoClient.request(ENDPOINTS.RECORDS)
+                .routeParam("bucket", bucket.getName())
+                .routeParam("collection", name);
+    }
+
     /**
-     * Retrive the records list of the current collection
+     * Retrieve the records list of the current collection
      * @return
      * @throws KintoException
      * @throws KintoHTTPException
      */
     public JSONObject listRecords() throws KintoException, KintoHTTPException {
-        GetRequest request = kintoClient.request(ENDPOINTS.RECORDS)
-                .routeParam("bucket", bucket.getName())
-                .routeParam("collection", name);
-        return kintoClient.execute(request);
+        return kintoClient.execute(getListRecordsRequest());
     }
 
     /**
-     * Retrive a record from the current collection
+     * Retrieve the records list of the current collection
+     * @param clazz the class of the retrieved Object
+     * @return a clazz object
+     * @throws KintoException
+     * @throws KintoHTTPException
+     */
+    public <T> T listRecords(Class<? extends T> clazz) throws KintoException, KintoHTTPException {
+        return kintoClient.execute(getListRecordsRequest(), clazz);
+    }
+
+    /**
+     * Retrieve a record from the current collection
      * @param id the record id to retrieve
      * @return
      * @throws KintoException
