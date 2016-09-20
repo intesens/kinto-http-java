@@ -80,7 +80,11 @@
                       Hot Fixes should be pushed to origin as well so that any dev can pick them up
                     -->
                     <pushHotfixes>true</pushHotfixes>
-
+                    <!--
+                      Prevents deployments from dev workstations so that they can be done by a CI
+                      server
+                    -->
+                    <noDeploy>true</noDeploy>
                     <flowInitContext>
                         <masterBranchName>master</masterBranchName>
                         <developBranchName>develop</developBranchName>
