@@ -27,6 +27,20 @@ public class Collection {
     }
 
     /**
+     * @return the current collection name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @return the current collection parent bucket
+     */
+    public Bucket getBucket() {
+        return bucket;
+    }
+
+    /**
      * Retrieve the collection data.
      * @return
      * @throws KintoException
