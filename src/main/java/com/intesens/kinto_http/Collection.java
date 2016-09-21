@@ -43,8 +43,8 @@ public class Collection {
     /**
      * Retrieve the collection data.
      * @return the raw data as a {@link JSONObject}
-     * @throws KintoException
-     * @throws ClientException
+     * @throws KintoException in case of error response from Kinto
+     * @throws ClientException in case of transport error
      */
     public JSONObject getData() throws KintoException, ClientException {
         GetRequest request = kintoClient.request(ENDPOINTS.COLLECTION)
@@ -62,8 +62,8 @@ public class Collection {
     /**
      * Retrieve the records list of the current collection
      * @return the records as a raw {@link JSONObject}
-     * @throws KintoException
-     * @throws ClientException
+     * @throws KintoException in case of error response from Kinto
+     * @throws ClientException in case of transport error
      */
     public JSONObject listRecords() throws KintoException, ClientException {
         return kintoClient.execute(getListRecordsRequest());
@@ -72,9 +72,10 @@ public class Collection {
     /**
      * Retrieve the records list of the current collection
      * @param clazz the class of the retrieved Object
+     * @param <T> the type the records should be unmarshalled to
      * @return a clazz object
-     * @throws KintoException
-     * @throws ClientException
+     * @throws KintoException in case of error response from Kinto
+     * @throws ClientException in case of transport error
      */
     public <T> T listRecords(Class<? extends T> clazz) throws KintoException, ClientException {
         return kintoClient.execute(getListRecordsRequest(), clazz);
@@ -84,8 +85,8 @@ public class Collection {
      * Retrieve a record from the current collection
      * @param id the record id to retrieve
      * @return the record as a raw JSONObject
-     * @throws KintoException
-     * @throws ClientException
+     * @throws KintoException in case of error response from Kinto
+     * @throws ClientException in case of transport error
      */
     public JSONObject getRecord(String id) throws KintoException, ClientException {
         GetRequest request = kintoClient.request(ENDPOINTS.RECORD)

@@ -44,9 +44,7 @@ public class KintoClient {
      * @param remote The remote URL
      *               Must contain the version
      * @param headers Custom http headers added to each requests
-     * @throws IllegalArgumentException
-     *          if remote is null or an empty String
-     *          if headers is null
+     * @throws IllegalArgumentException if remote is null or an empty String or if headers is null
      */
     public KintoClient(String remote, Map<String, String> headers) {
         this(remote);
@@ -57,12 +55,9 @@ public class KintoClient {
      * {@link KintoClient} constructor that allows to specify a remote kinto installation as well as an
      * {@link ObjectMapper} that will allow unmarshalling of responses as objects (that must be properly annotated
      * with jackson annotations).
-     * @param remote The remote URL
-     *               Must contain the version
+     * @param remote The remote URL. Must contain the version
      * @param objectMapper {@link ObjectMapper} to use for deserialization
-     * @throws IllegalArgumentException
-     *          if remote is null or an empty String
-     *          if headers is null
+     * @throws IllegalArgumentException if remote is null or an empty String or if headers is null
      */
     public KintoClient(String remote, ObjectMapper objectMapper) {
         this(remote);
@@ -73,13 +68,10 @@ public class KintoClient {
      * {@link KintoClient} constructor that allows to specify a remote kinto installation, default headers and an
      * {@link ObjectMapper} that will allow unmarshalling of responses as objects (that must be properly annotated
      * with jackson annotations).
-     * @param remote The remote URL
-     *               Must contain the version
+     * @param remote The remote URL. Must contain the version
      * @param headers Custom http headers added to each requests
      * @param objectMapper Custom object mapper
-     * @throws IllegalArgumentException
-     *          if remote is null or an empty String
-     *          if headers is null
+     * @throws IllegalArgumentException if remote is null or an empty String or if headers is null
      */
     public KintoClient(String remote, Map<String, String> headers, ObjectMapper objectMapper) {
         this(remote, headers);
@@ -88,8 +80,7 @@ public class KintoClient {
 
     /**
      * setter for remote
-     * @param remote The remote URL
-     *               Must contain the version
+     * @param remote The remote URL. Must contain the version
      * @throws IllegalArgumentException if remote is null or an empty String
      */
     public void setRemote(String remote) {
@@ -134,8 +125,8 @@ public class KintoClient {
     /**
      * Retrieves the list of buckets
      * @return a list of buckets
-     * @throws ClientException
-     * @throws KintoException
+     * @throws KintoException in case of error response from Kinto
+     * @throws ClientException in case of transport error
      */
     public JSONObject listBuckets() throws ClientException, KintoException {
         return execute(request(ENDPOINTS.BUCKETS));
@@ -144,7 +135,7 @@ public class KintoClient {
     /**
      * Retrieve a bucket objet to perform operations on it
      * @param name the bucket name
-     * @return
+     * @return a {@link Bucket}
      */
     public Bucket bucket(String name) {
         return new Bucket(this, name);
@@ -154,8 +145,8 @@ public class KintoClient {
      * Prepare a get request for the requested endpoint
      * Add default http headers (Accept, Content-Type)
      * Then add custom headers {@link #setHeaders(Map)}
-     * @param endpoint
-     * @return
+     * @param endpoint the {@link ENDPOINTS} to request to
+     * @return a {@link GetRequest} object
      */
     GetRequest request(ENDPOINTS endpoint) {
         String url = remote + endpoint.getPath();
@@ -214,7 +205,7 @@ public class KintoClient {
     /**
      * Closes the asynchronous http client and its event loop.
      * Use this method to close all the threads and allow your application to exit.
-     * @throws IOException
+     * @throws IOException in case of error when shutting down
      */
     public void shutdown() throws IOException {
         Unirest.shutdown();

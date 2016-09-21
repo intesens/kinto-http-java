@@ -15,7 +15,7 @@ public class Bucket {
     private String name;
 
     /**
-     * @param kintoClient
+     * @param kintoClient the {@link KintoClient} to request this bucket with
      * @param name the name of the bucket
      */
     public Bucket(KintoClient kintoClient, String name) {
@@ -25,7 +25,7 @@ public class Bucket {
 
     /**
      * Retrieves the list of collections in the current bucket.
-     * TODO: make this method return a List<Collection> instead
+     * TODO: make this method return a {@code List<Collection>} instead
      * @return a {@link JSONObject} containing the response data
      * @throws KintoException in case kinto answers with an error
      * @throws ClientException in case of transport errors
