@@ -16,7 +16,7 @@ public class Collection {
     private String name;
 
     /**
-     * @param client
+     * @param client the {@link KintoClient} used for subsequent requests
      * @param bucket the bucket parent of the collection
      * @param name the name of the collection
      */
@@ -42,11 +42,11 @@ public class Collection {
 
     /**
      * Retrieve the collection data.
-     * @return
+     * @return the raw data as a {@link JSONObject}
      * @throws KintoException
-     * @throws KintoHTTPException
+     * @throws ClientException
      */
-    public JSONObject getData() throws KintoException, KintoHTTPException {
+    public JSONObject getData() throws KintoException, ClientException {
         GetRequest request = kintoClient.request(ENDPOINTS.COLLECTION)
                 .routeParam("bucket", bucket.getName())
                 .routeParam("collection", name);
@@ -61,11 +61,11 @@ public class Collection {
 
     /**
      * Retrieve the records list of the current collection
-     * @return
+     * @return the records as a raw {@link JSONObject}
      * @throws KintoException
-     * @throws KintoHTTPException
+     * @throws ClientException
      */
-    public JSONObject listRecords() throws KintoException, KintoHTTPException {
+    public JSONObject listRecords() throws KintoException, ClientException {
         return kintoClient.execute(getListRecordsRequest());
     }
 
@@ -74,20 +74,20 @@ public class Collection {
      * @param clazz the class of the retrieved Object
      * @return a clazz object
      * @throws KintoException
-     * @throws KintoHTTPException
+     * @throws ClientException
      */
-    public <T> T listRecords(Class<? extends T> clazz) throws KintoException, KintoHTTPException {
+    public <T> T listRecords(Class<? extends T> clazz) throws KintoException, ClientException {
         return kintoClient.execute(getListRecordsRequest(), clazz);
     }
 
     /**
      * Retrieve a record from the current collection
      * @param id the record id to retrieve
-     * @return
+     * @return the record as a raw JSONObject
      * @throws KintoException
-     * @throws KintoHTTPException
+     * @throws ClientException
      */
-    public JSONObject getRecord(String id) throws KintoException, KintoHTTPException {
+    public JSONObject getRecord(String id) throws KintoException, ClientException {
         GetRequest request = kintoClient.request(ENDPOINTS.RECORD)
                 .routeParam("bucket", bucket.getName())
                 .routeParam("collection", name)

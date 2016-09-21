@@ -28,6 +28,8 @@ public class KintoClient {
     private Map<String, String> headers;
 
     /**
+     * Simple constructor that allows to talk to a kinto store. Using this constructor does not allow automatic
+     * response deserialization of custom types.
      * @param remote The remote URL
      *               Must contain the version
      * @throws IllegalArgumentException if remote is null or an empty String
@@ -37,6 +39,8 @@ public class KintoClient {
     }
 
     /**
+     * Simple constructor that allows to talk to a kinto store and also allows to configure default headers. Using
+     * this constructor does not allow automatic response deserialization of custom types.
      * @param remote The remote URL
      *               Must contain the version
      * @param headers Custom http headers added to each requests
@@ -50,9 +54,12 @@ public class KintoClient {
     }
 
     /**
+     * {@link KintoClient} constructor that allows to specify a remote kinto installation as well as an
+     * {@link ObjectMapper} that will allow unmarshalling of responses as objects (that must be properly annotated
+     * with jackson annotations).
      * @param remote The remote URL
      *               Must contain the version
-     * @param objectMapper Custom objectMapper
+     * @param objectMapper {@link ObjectMapper} to use for deserialization
      * @throws IllegalArgumentException
      *          if remote is null or an empty String
      *          if headers is null
@@ -63,6 +70,9 @@ public class KintoClient {
     }
 
     /**
+     * {@link KintoClient} constructor that allows to specify a remote kinto installation, default headers and an
+     * {@link ObjectMapper} that will allow unmarshalling of responses as objects (that must be properly annotated
+     * with jackson annotations).
      * @param remote The remote URL
      *               Must contain the version
      * @param headers Custom http headers added to each requests
@@ -77,6 +87,7 @@ public class KintoClient {
     }
 
     /**
+     * setter for remote
      * @param remote The remote URL
      *               Must contain the version
      * @throws IllegalArgumentException if remote is null or an empty String
@@ -90,6 +101,7 @@ public class KintoClient {
     }
 
     /**
+     * getter for remote
      * @return the current remote
      */
     public String getRemote() {
@@ -97,7 +109,7 @@ public class KintoClient {
     }
 
     /**
-     * Customs http headers that will be added to each requests
+     * Custom http headers that will be added to each request
      * @param headers a map of http headers fields and values
      * @throws IllegalArgumentException if headers is null
      */
@@ -113,7 +125,7 @@ public class KintoClient {
     }
 
     /**
-     * @return true if headers is not null and not empty
+     * @return true if default header are provided
      */
     public boolean isHeaders() {
         return headers != null && !headers.isEmpty();
@@ -122,10 +134,10 @@ public class KintoClient {
     /**
      * Retrieves the list of buckets
      * @return a list of buckets
-     * @throws KintoHTTPException
+     * @throws ClientException
      * @throws KintoException
      */
-    public JSONObject listBuckets() throws KintoHTTPException, KintoException {
+    public JSONObject listBuckets() throws ClientException, KintoException {
         return execute(request(ENDPOINTS.BUCKETS));
     }
 
@@ -158,12 +170,12 @@ public class KintoClient {
 
     /**
      * Execute the given request
-     * @param request
+     * @param request the {@link GetRequest} object to execute
      * @return the response body as a JSONObject
      * @throws KintoException if there is a kinto error
-     * @throws KintoHTTPException if there is a http transport error
+     * @throws ClientException if there is a http transport error
      */
-    JSONObject execute(GetRequest request) throws KintoException, KintoHTTPException {
+    JSONObject execute(GetRequest request) throws KintoException, ClientException {
         try {
             // Call the remote with a request
             HttpResponse<JsonNode> response = request.asJson();
@@ -173,19 +185,19 @@ public class KintoClient {
             }
             return response.getBody().getObject();
         } catch (UnirestException e) {
-            throw new KintoHTTPException("Error during \"" + request.getUrl() + "\"", e);
+            throw new ClientException("Error during \"" + request.getUrl() + "\"", e);
         }
     }
 
     /**
      * Execute the given request
-     * @param request
+     * @param request the {@link GetRequest} object to execute
      * @param clazz the response class
      * @return the response body as a clazz object
      * @throws KintoException if there is a kinto error
-     * @throws KintoHTTPException if there is a http transport error
+     * @throws ClientException if there is a http transport error
      */
-    <T> T execute(GetRequest request, Class<? extends T> clazz) throws KintoException, KintoHTTPException {
+    <T> T execute(GetRequest request, Class<? extends T> clazz) throws KintoException, ClientException {
         try {
             // Call the remote with a request
             HttpResponse<T> response = request.asObject(clazz);
@@ -195,12 +207,12 @@ public class KintoClient {
             }
             return response.getBody();
         } catch (UnirestException e) {
-            throw new KintoHTTPException("Error during \"" + request.getUrl() + "\"", e);
+            throw new ClientException("Error during \"" + request.getUrl() + "\"", e);
         }
     }
 
     /**
-     * Clone the asynchronous http client and its event loop.
+     * Closes the asynchronous http client and its event loop.
      * Use this method to close all the threads and allow your application to exit.
      * @throws IOException
      */
