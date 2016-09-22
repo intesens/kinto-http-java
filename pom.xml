@@ -39,8 +39,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/intesens/kinto-http-java.git</connection>
-        <developerConnection>scm:git:git://github.com/intesens/kinto-http-java.git</developerConnection>
+        <connection>scm:git:ssh://github.com/intesens/kinto-http-java.git</connection>
+        <developerConnection>scm:git:ssh://github.com/intesens/kinto-http-java.git</developerConnection>
         <url>https://github.com/intesens/kinto-http-java</url>
     </scm>
 
