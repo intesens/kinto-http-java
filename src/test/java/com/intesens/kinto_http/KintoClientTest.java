@@ -135,7 +135,7 @@ public class KintoClientTest {
     }
 
     @Test
-    public void testListBuckets() throws KintoException, KintoHTTPException, UnirestException {
+    public void testListBuckets() throws KintoException, ClientException, UnirestException {
         // GIVEN a fake remote kinto url
         String remote = "https://fake.kinto.url";
         // AND expected headers
@@ -223,7 +223,7 @@ public class KintoClientTest {
     }
 
     @Test
-    public void testExecuteCorrect() throws UnirestException, KintoException, KintoHTTPException {
+    public void testExecuteCorrect() throws UnirestException, KintoException, ClientException {
         // GIVEN a fake url
         String remote = "https://fake.kinto.url";
         // AND a kintoClient
@@ -244,7 +244,7 @@ public class KintoClientTest {
     }
 
     @Test(expected = KintoException.class)
-    public void testExecuteKintoError() throws UnirestException, KintoException, KintoHTTPException {
+    public void testExecuteKintoError() throws UnirestException, KintoException, ClientException {
         // GIVEN a fake url
         String remote = "https://fake.kinto.url";
         // AND a kintoClient
@@ -261,8 +261,8 @@ public class KintoClientTest {
         // THEN a KintoException is thrown
     }
 
-    @Test(expected = KintoHTTPException.class)
-    public void testExecuteHttpError() throws UnirestException, KintoException, KintoHTTPException {
+    @Test(expected = ClientException.class)
+    public void testExecuteHttpError() throws UnirestException, KintoException, ClientException {
         // GIVEN a fake url
         String remote = "https://fake.kinto.url";
         // AND a kintoClient
@@ -272,7 +272,7 @@ public class KintoClientTest {
         doThrow(UnirestException.class).when(request).asJson();
         // WHEN calling execute
         kintoClient.execute(request);
-        // THEN a KintoHTTPException is thrown
+        // THEN a ClientException is thrown
     }
 
     // TODO testShutdown

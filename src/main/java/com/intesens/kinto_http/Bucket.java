@@ -15,7 +15,7 @@ public class Bucket {
     private String name;
 
     /**
-     * @param kintoClient
+     * @param kintoClient the {@link KintoClient} to request this bucket with
      * @param name the name of the bucket
      */
     public Bucket(KintoClient kintoClient, String name) {
@@ -25,11 +25,12 @@ public class Bucket {
 
     /**
      * Retrieves the list of collections in the current bucket.
-     * @return
-     * @throws KintoException
-     * @throws KintoHTTPException
+     * TODO: make this method return a {@code List<Collection>} instead
+     * @return a {@link JSONObject} containing the response data
+     * @throws KintoException in case kinto answers with an error
+     * @throws ClientException in case of transport errors
      */
-    public JSONObject listCollections() throws KintoException, KintoHTTPException {
+    public JSONObject listCollections() throws KintoException, ClientException {
         GetRequest request = kintoClient.request(ENDPOINTS.COLLECTIONS)
                 .routeParam("bucket", name);
         return kintoClient.execute(request);
@@ -38,7 +39,7 @@ public class Bucket {
     /**
      * Retrieve a collection object to perorm operations on it
      * @param name the name of the wanted collection
-     * @return
+     * @return a {@link Collection} object
      */
     public Collection collection(String name) {
         return new Collection(this.kintoClient, this, name);
@@ -46,11 +47,11 @@ public class Bucket {
 
     /**
      * Retrive bucket data
-     * @return
-     * @throws KintoHTTPException
-     * @throws KintoException
+     * @return the raw data from kinto
+     * @throws ClientException in case of transport errors
+     * @throws KintoException in case kinto answers with an error
      */
-    public JSONObject getData() throws KintoHTTPException, KintoException {
+    public JSONObject getData() throws ClientException, KintoException {
         GetRequest request = kintoClient
                 .request(ENDPOINTS.BUCKET)
                 .routeParam("bucket", name);
