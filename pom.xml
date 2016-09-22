@@ -4,7 +4,7 @@
 
     <groupId>com.intesens</groupId>
     <artifactId>kinto-http-java</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -42,7 +42,8 @@
         <connection>scm:git:ssh://git@github.com/intesens/kinto-http-java.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/intesens/kinto-http-java.git</developerConnection>
         <url>https://github.com/intesens/kinto-http-java</url>
-    </scm>
+      <tag>kinto-http-java-0.2</tag>
+  </scm>
 
     <distributionManagement>
         <snapshotRepository>
