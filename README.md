@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/intesens/kinto-http-java.svg?branch=master)](https://travis-ci.org/intesens/kinto-http-java)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.intesens/kinto-http-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.rsql/rsql-parser)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.intesens/kinto-http-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.intesens/kinto-http-java)
+[![Dependency Status](https://www.versioneye.com/user/projects/57e4edb0bd6fa6004e11f0d9/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57e4edb0bd6fa6004e11f0d9)
 
 # Kinto java client
 
