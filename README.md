@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/intesens/kinto-http-java.svg?branch=master)](https://travis-ci.org/intesens/kinto-http-java)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.intesens/kinto-http-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.rsql/rsql-parser)
 
 # Kinto java client
 
