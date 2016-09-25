@@ -1,7 +1,7 @@
 package com.intesens.kinto_http;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.spy;
@@ -58,15 +58,16 @@ public class BucketTest {
                 assertThat(getRequest.getHeaders(), is(expectedHeaders));
                 // AND the get method is used
                 assertThat(getRequest.getHttpMethod(), is(HttpMethod.GET));
-                return new JSONObject("{}");
+                return new JSONObject("{data:[{id: \"col1\"},{id:\"col2\"}]}");
             }
         })
                 .when(kintoClient)
                 .execute(any(GetRequest.class));
         // WHEN calling listBuckets
-        JSONObject jsonObject = kintoClient.bucket("bucketName").listCollections();
+        Set<Collection> collections = kintoClient.bucket("bucketName").listCollections();
         // THEN check if the answer is correctly called by checking the result
-        assertThat(jsonObject.toString(), is("{}"));
+
+        assertThat(collections.size(), is(2));
     }
 
     @Test
@@ -78,13 +79,13 @@ public class BucketTest {
         // AND a collection name
         String collectionName = "collectionName";
         // AND a bucket name
-        String bucketName = "bucketName";
+        String bucketId = "bucketId";
         // WHEN calling bucket.collection
-        Collection collection = kintoClient.bucket(bucketName).collection(collectionName);
+        Collection collection = kintoClient.bucket(bucketId).collection(collectionName);
         // THEN collection has a name
-        assertThat(collection.getName(), is(collectionName));
+        assertThat(collection.getId(), is(collectionName));
         // AND the collection has a bucket (with a name)
-        assertThat(collection.getBucket().getName(), is(bucketName));
+        assertThat(collection.getBucket().getId(), is(bucketId));
     }
 
     @Test
@@ -126,7 +127,7 @@ public class BucketTest {
         // WHEN calling bucket
         Bucket bucket = kintoClient.bucket("bucketName");
         // THEN check if the answer is correctly called by checking the result
-        assertThat(bucket.getName(), is("bucketName"));
+        assertThat(bucket.getId(), is("bucketName"));
     }
 
 }

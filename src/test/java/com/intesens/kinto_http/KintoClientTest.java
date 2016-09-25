@@ -175,7 +175,7 @@ public class KintoClientTest {
         // WHEN calling bucket
         Bucket bucket = kintoClient.bucket(bucketName);
         // THEN bucket have a name
-        assertThat(bucket.getName(), is(bucketName));
+        assertThat(bucket.getId(), is(bucketName));
     }
 
     @Test
