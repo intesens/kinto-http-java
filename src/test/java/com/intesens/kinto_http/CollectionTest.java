@@ -1,7 +1,7 @@
 package com.intesens.kinto_http;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.spy;
@@ -64,7 +64,7 @@ public class CollectionTest {
         // WHEN calling bucket.collection
         Collection collection = kintoClient.bucket(bucketName).collection(collectionName);
         // THEN collection has a name
-        assertThat(collection.getName(), is(collectionName));
+        assertThat(collection.getId(), is(collectionName));
     }
 
     @Test
@@ -80,7 +80,7 @@ public class CollectionTest {
         // WHEN calling bucket.collection
         Collection collection = kintoClient.bucket(bucketName).collection(collectionName);
         // THEN the collection has a bucket (with a name)
-        assertThat(collection.getBucket().getName(), is(bucketName));
+        assertThat(collection.getBucket().getId(), is(bucketName));
     }
 
     @Test
@@ -138,18 +138,18 @@ public class CollectionTest {
                 assertThat(getRequest.getHeaders(), is(expectedHeaders));
                 // AND the get method is used
                 assertThat(getRequest.getHttpMethod(), is(HttpMethod.GET));
-                return new JSONObject("{}");
+                return new JSONObject("{data:[{foo: \"bar\"},{bar: \"baz\"}]}");
             }
         })
                 .when(kintoClient)
                 .execute(any(GetRequest.class));
         // WHEN calling bucket.collection.listRecords
-        JSONObject jsonObject = kintoClient
+        Set<JSONObject> records = kintoClient
                 .bucket("bucketName")
                 .collection("collectionName")
                 .listRecords();
         // THEN check if the answer is correctly called by checking the result
-        assertThat(jsonObject.toString(), is("{}"));
+        assertThat(records.size(), is(2));
     }
 
     @Test
@@ -222,6 +222,48 @@ public class CollectionTest {
                 .getRecord("recordId");
         // THEN check if the answer is correctly called by checking the result
         assertThat(jsonObject.toString(), is("{}"));
+    }
+
+    @Test
+    public void getRecordWithClazz() throws Exception {
+        // GIVEN a fake remote kinto url
+        String remote = "https://fake.kinto.url";
+        // AND expected headers
+        Map<String, List<String>> expectedHeaders = new HashMap<>(defaultHeaders);
+        // AND a kintoClient
+        KintoClient kintoClient = spy(new KintoClient(remote));
+        // AND a mocked kintoClient
+        doAnswer(new Answer<Map<String, String>>() {
+            public Map<String, String> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                GetRequest getRequest = (GetRequest)args[0];
+                // THEN the correct endpoint is called
+                assertThat(
+                        getRequest.getUrl(),
+                        is(remote + "/buckets/bucketName/collections/collectionName/records/recordId")
+                );
+                // AND headers are corrects
+                assertThat(getRequest.getHeaders(), is(expectedHeaders));
+                // AND the get method is used
+                assertThat(getRequest.getHttpMethod(), is(HttpMethod.GET));
+                Map<String, String> response = new HashMap<>();
+                response.put("foo", "bar");
+                response.put("echo", "charlie");
+                return response;
+            }
+        })
+                .when(kintoClient)
+                .execute(any(GetRequest.class), any(Class.class));
+        // WHEN calling bucket.collection.listRecords
+        Map<String, String> response = kintoClient
+                .bucket("bucketName")
+                .collection("collectionName")
+                .getRecord("recordId", Map.class);
+        // THEN check if the answer is correctly called by checking the result
+        Map<String, String> expectedMap = new HashMap<>();
+        expectedMap.put("foo", "bar");
+        expectedMap.put("echo", "charlie");
+        assertThat(response, is(expectedMap));
     }
 
 }

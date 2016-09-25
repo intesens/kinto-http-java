@@ -1,5 +1,9 @@
 package com.intesens.kinto_http;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.mashape.unirest.request.GetRequest;
@@ -11,42 +15,50 @@ public class Bucket {
 
     private KintoClient kintoClient;
 
-    /** The bucket name */
-    private String name;
+    /** The bucket id */
+    private String id;
 
     /**
      * @param kintoClient the {@link KintoClient} to request this bucket with
-     * @param name the name of the bucket
+     * @param name the id of the bucket
      */
     public Bucket(KintoClient kintoClient, String name) {
         this.kintoClient = kintoClient;
-        this.name = name;
+        this.id = name;
     }
 
     /**
      * Retrieves the list of collections in the current bucket.
-     * TODO: make this method return a {@code List<Collection>} instead
-     * @return a {@link JSONObject} containing the response data
+     * @return a {@link Set<Collection>} of the collections
      * @throws KintoException in case kinto answers with an error
      * @throws ClientException in case of transport errors
      */
-    public JSONObject listCollections() throws KintoException, ClientException {
+    public Set<Collection> listCollections() throws KintoException, ClientException {
+        Set<Collection> collections = new HashSet<>();
         GetRequest request = kintoClient.request(ENDPOINTS.COLLECTIONS)
-                .routeParam("bucket", name);
-        return kintoClient.execute(request);
+                .routeParam("bucket", id);
+        JSONObject response = kintoClient.execute(request);
+        JSONArray data = response.getJSONArray("data");
+        if(data != null) {
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject jsonCol = data.getJSONObject(i);
+                collections.add(collection(jsonCol.getString("id")));
+            }
+        }
+        return collections;
     }
 
     /**
      * Retrieve a collection object to perorm operations on it
-     * @param name the name of the wanted collection
+     * @param id the id of the wanted collection
      * @return a {@link Collection} object
      */
-    public Collection collection(String name) {
-        return new Collection(this.kintoClient, this, name);
+    public Collection collection(String id) {
+        return new Collection(this.kintoClient, this, id);
     }
 
     /**
-     * Retrive bucket data
+     * Retrieve raw bucket data
      * @return the raw data from kinto
      * @throws ClientException in case of transport errors
      * @throws KintoException in case kinto answers with an error
@@ -54,11 +66,11 @@ public class Bucket {
     public JSONObject getData() throws ClientException, KintoException {
         GetRequest request = kintoClient
                 .request(ENDPOINTS.BUCKET)
-                .routeParam("bucket", name);
+                .routeParam("bucket", id);
         return kintoClient.execute(request);
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 }
